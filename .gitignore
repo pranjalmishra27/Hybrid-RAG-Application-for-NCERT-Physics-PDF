@@ -55,8 +55,6 @@ ENV/
 non-elevated-venv/
 
 # Vector DB & Local Storage
-data/logs/
-*.jsonl
 *.log
 
 # PDF data files (NCERT books)
