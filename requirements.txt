@@ -1,0 +1,50 @@
+# Core
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+pydantic==2.7.1
+python-multipart==0.0.9
+httpx==0.27.0
+
+# Document Processing
+pymupdf==1.24.3
+langchain==0.2.1
+langchain-community==0.2.1
+langchain-core==0.2.1
+
+# Vector DB
+chromadb==0.5.0
+
+# Embeddings & Reranker
+sentence-transformers==3.0.0
+torch==2.3.0
+transformers==4.41.1
+
+# BM25
+rank-bm25==0.2.2
+
+# Graph DB
+neo4j==5.20.0
+
+# LLM
+google-generativeai==0.7.0
+openai==1.30.1
+
+# Monitoring
+langsmith==0.1.67
+
+# Evaluation
+ragas==0.1.10
+datasets==2.19.2
+
+# Frontend
+streamlit==1.35.0
+streamlit-extras==0.4.3
+plotly==5.22.0
+pandas==2.2.2
+
+# Utilities
+python-dotenv==1.0.1
+loguru==0.7.2
+tenacity==8.3.0
+numpy==1.26.4
+tqdm==4.66.4

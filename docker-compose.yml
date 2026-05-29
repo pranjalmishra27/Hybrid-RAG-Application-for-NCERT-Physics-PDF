@@ -1,0 +1,74 @@
+version: "3.9"
+
+services:
+  # ── Neo4j Graph Database ───────────────────────────────────────────
+  neo4j:
+    image: neo4j:5.18-community
+    container_name: physics_rag_neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/physics_rag_2024
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_memory_heap_max__size=1G
+    ports:
+      - "7474:7474"   # Neo4j Browser
+      - "7687:7687"   # Bolt protocol
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "physics_rag_2024", "RETURN 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ── FastAPI Backend ────────────────────────────────────────────────
+  backend:
+    build: .
+    container_name: physics_rag_backend
+    command: uvicorn app.api.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=physics_rag_2024
+      - CHROMA_PERSIST_DIR=/app/data/chroma_db
+      - BM25_INDEX_PATH=/app/data/bm25_index.pkl
+      - PDF_PATH=/app/data/ncert_physics_part1.pdf
+      - EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
+      - RERANKER_MODEL=BAAI/bge-reranker-base
+      - TOP_K_RETRIEVAL=10
+      - TOP_K_RERANK=5
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-false}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY:-}
+      - LANGCHAIN_PROJECT=physics-hybrid-rag
+    volumes:
+      - ./data:/app/data
+      - chroma_data:/app/data/chroma_db
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Streamlit Frontend ─────────────────────────────────────────────
+  frontend:
+    build: .
+    container_name: physics_rag_frontend
+    command: streamlit run app/frontend/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE=http://backend:8000
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  chroma_data:
