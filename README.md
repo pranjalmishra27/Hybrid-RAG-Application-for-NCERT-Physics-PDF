@@ -102,18 +102,7 @@ cp ~/Downloads/ncert_physics_12_part1.pdf ./data/ncert_physics_part1.pdf
 docker-compose up --build
 ```
 
-Services started:
-| Service | URL |
-|---------|-----|
-| Streamlit Frontend | http://localhost:8501 |
-| FastAPI Backend | http://localhost:8000 |
-| Neo4j Browser | http://localhost:7474 |
-| API Docs | http://localhost:8000/docs |
-
 ### 4. Ingest the PDF
-
-Via Streamlit sidebar → **"🚀 Ingest PDF"** button,
-or via API:
 
 ```bash
 curl -X POST http://localhost:8000/ingest \
