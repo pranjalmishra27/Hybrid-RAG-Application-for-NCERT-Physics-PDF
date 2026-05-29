@@ -55,13 +55,9 @@ ENV/
 non-elevated-venv/
 
 # Vector DB & Local Storage
-data/chroma_db/
 data/logs/
-data/chunks_debug.json
-*.pkl
 *.jsonl
 *.log
-*.sqlite3
 
 # PDF data files (NCERT books)
 data/*.pdf
